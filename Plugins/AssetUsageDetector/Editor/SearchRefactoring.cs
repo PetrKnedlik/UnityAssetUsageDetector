@@ -5,7 +5,6 @@ using System.Reflection;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
 
 namespace AssetUsageDetectorNamespace
@@ -350,7 +349,7 @@ namespace AssetUsageDetectorNamespace
                 {
                     if (
                         ShaderUtil.GetPropertyType(shader, i)
-                        != UnityEngine.Rendering.ShaderPropertyType.Texture
+                        != ShaderUtil.ShaderPropertyType.TexEnv
                     )
                         continue;
 
