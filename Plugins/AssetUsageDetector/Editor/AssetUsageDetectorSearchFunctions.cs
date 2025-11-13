@@ -13,6 +13,7 @@ using UnityEngine.Playables;
 using UnityEditor.U2D;
 using UnityEditor.Compilation;
 using UnityEngine.Tilemaps;
+using UnityEngine.Rendering;
 #if ASSET_USAGE_ADDRESSABLES
 using UnityEngine.AddressableAssets;
 #endif
@@ -644,7 +645,7 @@ namespace AssetUsageDetectorNamespace
 				int shaderPropertyCount = ShaderUtil.GetPropertyCount( shader );
 				for( int i = 0; i < shaderPropertyCount; i++ )
 				{
-					if( ShaderUtil.GetPropertyType( shader, i ) == ShaderUtil.ShaderPropertyType.TexEnv )
+					if( ShaderUtil.GetPropertyType( shader, i ) == UnityEngine.Rendering.ShaderPropertyType.Texture )
 					{
 						string propertyName = ShaderUtil.GetPropertyName( shader, i );
 						Texture assignedTexture = material.GetTexture( propertyName );
@@ -676,7 +677,7 @@ namespace AssetUsageDetectorNamespace
 					int shaderPropertyCount = ShaderUtil.GetPropertyCount( shader );
 					for( int i = 0; i < shaderPropertyCount; i++ )
 					{
-						if( ShaderUtil.GetPropertyType( shader, i ) == ShaderUtil.ShaderPropertyType.TexEnv )
+						if( ShaderUtil.GetPropertyType( shader, i ) == UnityEngine.Rendering.ShaderPropertyType.Texture )
 						{
 							string propertyName = ShaderUtil.GetPropertyName( shader, i );
 							Texture defaultTexture = shaderImporter.GetDefaultTexture( propertyName );

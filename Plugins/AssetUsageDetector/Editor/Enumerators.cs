@@ -4,127 +4,139 @@ using UnityEngine;
 
 namespace AssetUsageDetectorNamespace
 {
-	public class EmptyEnumerator<T> : IEnumerable<T>, IEnumerator<T>
-	{
-		public T Current { get { return default( T ); } }
-		object IEnumerator.Current { get { return Current; } }
+    public class EmptyEnumerator<T> : IEnumerable<T>, IEnumerator<T>
+    {
+        public T Current
+        {
+            get { return default(T); }
+        }
+        object IEnumerator.Current
+        {
+            get { return Current; }
+        }
 
-		public void Dispose() { }
-		public void Reset() { }
+        public void Dispose() { }
 
-		public bool MoveNext()
-		{
-			return false;
-		}
+        public void Reset() { }
 
-		public IEnumerator<T> GetEnumerator()
-		{
-			return this;
-		}
+        public bool MoveNext()
+        {
+            return false;
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return this;
-		}
-	}
+        public IEnumerator<T> GetEnumerator()
+        {
+            return this;
+        }
 
-	public class ObjectToSearchEnumerator : IEnumerable<Object>
-	{
-		public class Enumerator : IEnumerator<Object>
-		{
-			public Object Current
-			{
-				get
-				{
-					if( subAssetIndex < 0 )
-						return source[index].obj;
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this;
+        }
+    }
 
-					return source[index].subAssets[subAssetIndex].subAsset;
-				}
-			}
+    public class ObjectToSearchEnumerator : IEnumerable<Object>
+    {
+        public class Enumerator : IEnumerator<Object>
+        {
+            public Object Current
+            {
+                get
+                {
+                    if (subAssetIndex < 0)
+                        return source[index].obj;
 
-			object IEnumerator.Current { get { return Current; } }
+                    return source[index].subAssets[subAssetIndex].subAsset;
+                }
+            }
 
-			private List<ObjectToSearch> source;
-			private int index;
-			private int subAssetIndex;
+            object IEnumerator.Current
+            {
+                get { return Current; }
+            }
 
-			public Enumerator( List<ObjectToSearch> source )
-			{
-				this.source = source;
-				Reset();
-			}
+            private List<ObjectToSearch> source;
+            private int index;
+            private int subAssetIndex;
 
-			public void Dispose()
-			{
-				source = null;
-			}
+            public Enumerator(List<ObjectToSearch> source)
+            {
+                this.source = source;
+                Reset();
+            }
 
-			public bool MoveNext()
-			{
-				if( subAssetIndex < -1 )
-				{
-					subAssetIndex = -1;
+            public void Dispose()
+            {
+                source = null;
+            }
 
-					if( ++index >= source.Count )
-						return false;
+            public bool MoveNext()
+            {
+                if (subAssetIndex < -1)
+                {
+                    subAssetIndex = -1;
 
-					// Skip folder assets in the enumeration, AssetUsageDetector expands encountered folders automatically
-					// and we don't want that to happen as source[index].subAssets already contains the folder's contents
-					if( !source[index].obj.IsFolder() )
-						return true;
-				}
+                    if (++index >= source.Count)
+                        return false;
 
-				List<ObjectToSearch.SubAsset> subAssets = source[index].subAssets;
-				if( subAssets != null )
-				{
-					while( ++subAssetIndex < subAssets.Count && !subAssets[subAssetIndex].shouldSearch )
-						continue;
+                    // Skip folder assets in the enumeration, AssetUsageDetector expands encountered folders automatically
+                    // and we don't want that to happen as source[index].subAssets already contains the folder's contents
+                    if (!source[index].obj.IsFolder())
+                        return true;
+                }
 
-					if( subAssetIndex < subAssets.Count )
-						return true;
-				}
+                List<ObjectToSearch.SubAsset> subAssets = source[index].subAssets;
+                if (subAssets != null)
+                {
+                    while (
+                        ++subAssetIndex < subAssets.Count && !subAssets[subAssetIndex].shouldSearch
+                    )
+                        continue;
 
-				subAssetIndex = -2;
-				return MoveNext();
-			}
+                    if (subAssetIndex < subAssets.Count)
+                        return true;
+                }
 
-			public void Reset()
-			{
-				index = -1;
-				subAssetIndex = -2;
-			}
-		}
+                subAssetIndex = -2;
+                return MoveNext();
+            }
 
-		private readonly List<ObjectToSearch> source;
+            public void Reset()
+            {
+                index = -1;
+                subAssetIndex = -2;
+            }
+        }
 
-		public ObjectToSearchEnumerator( List<ObjectToSearch> source )
-		{
-			this.source = source;
-		}
+        private readonly List<ObjectToSearch> source;
 
-		public IEnumerator<Object> GetEnumerator()
-		{
-			return new Enumerator( source );
-		}
+        public ObjectToSearchEnumerator(List<ObjectToSearch> source)
+        {
+            this.source = source;
+        }
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return GetEnumerator();
-		}
+        public IEnumerator<Object> GetEnumerator()
+        {
+            return new Enumerator(source);
+        }
 
-		public Object[] ToArray()
-		{
-			int count = 0;
-			foreach( Object obj in this )
-				count++;
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
 
-			Object[] result = new Object[count];
-			int index = 0;
-			foreach( Object obj in this )
-				result[index++] = obj;
+        public Object[] ToArray()
+        {
+            int count = 0;
+            foreach (Object obj in this)
+                count++;
 
-			return result;
-		}
-	}
+            Object[] result = new Object[count];
+            int index = 0;
+            foreach (Object obj in this)
+                result[index++] = obj;
+
+            return result;
+        }
+    }
 }
